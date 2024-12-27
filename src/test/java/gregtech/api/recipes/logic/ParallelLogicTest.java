@@ -2,10 +2,8 @@ package gregtech.api.recipes.logic;
 
 import gregtech.Bootstrap;
 import gregtech.api.GTValues;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.MultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.FluidTankList2;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -13,7 +11,6 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTHashMaps;
-import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.SimpleMachineMetaTileEntityResizable;
@@ -33,6 +30,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
+@SuppressWarnings("DataFlowIssue")
 public class ParallelLogicTest {
 
     MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false);
@@ -366,7 +364,7 @@ public class ParallelLogicTest {
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe,
-                new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
+                exportFluidBus.getExportFluids(), parallelLimit);
 
         assertThat(itemRatio, is(4));
     }
@@ -397,7 +395,7 @@ public class ParallelLogicTest {
         exportFluidBus.getExportFluids().fill(Materials.Acetone.getFluid(15800), true);
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe,
-                new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
+                exportFluidBus.getExportFluids(), parallelLimit);
 
         assertThat(itemRatio, is(2));
     }
@@ -428,7 +426,7 @@ public class ParallelLogicTest {
         exportFluidBus.getExportFluids().fill(Materials.Acetone.getFluid(16000), true);
 
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe,
-                new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
+                exportFluidBus.getExportFluids(), parallelLimit);
 
         assertThat(itemRatio, is(0));
     }
@@ -728,7 +726,7 @@ public class ParallelLogicTest {
         importFluidBus.getImportFluids().fill(Materials.Water.getFluid(1000), true);
         secondImportFluidBus.getImportFluids().fill(Materials.Acetone.getFluid(1), true);
 
-        MultipleTankHandler tankHandler = new FluidTankList2(false, importFluidBus.getImportFluids().getTankAt(0),
+        MultipleTankHandler tankHandler = new FluidTankList(false, importFluidBus.getImportFluids().getTankAt(0),
                 secondImportFluidBus.getImportFluids().getTankAt(0));
 
         int fluidRatio = ParallelLogic.getMaxRatioFluid(GTHashMaps.fromFluidHandler(tankHandler),
