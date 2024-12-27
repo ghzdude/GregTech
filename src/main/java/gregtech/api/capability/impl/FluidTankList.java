@@ -50,11 +50,6 @@ public final class FluidTankList extends MultipleTankHandler {
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties() {
-        return this.tanks;
-    }
-
-    @Override
     public @NotNull List<Entry> getFluidTanks() {
         return Collections.unmodifiableList(Arrays.asList(this.tanks));
     }
@@ -67,6 +62,11 @@ public final class FluidTankList extends MultipleTankHandler {
     @Override
     public @NotNull Entry getTankAt(int index) {
         return tanks[index];
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return this.tanks;
     }
 
     @Override
